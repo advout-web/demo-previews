@@ -1,0 +1,5 @@
+/* ブロックエディタ用（本文の見た目をサイトに近づける） */
+body { font-family: "Noto Sans JP", sans-serif; font-weight: 300; font-size: 15.5px; line-height: 2.2; color: #26221d; }
+h2, h3 { font-family: "Zen Old Mincho", serif; }
+h2 { border-bottom: 1px solid rgba(38, 34, 29, .14); padding-bottom: .5em; }
+a { color: #12382f; }
