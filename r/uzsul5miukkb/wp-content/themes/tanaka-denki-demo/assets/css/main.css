@@ -1,0 +1,507 @@
+/* =========================================================
+   Tanaka Denki Demo（株式会社 田中電気工事様 リニューアルのご提案用の見本）
+   方針：「スイッチを入れると、明かりが灯る」
+   夜の紺の地に、電球色の明かり。分電盤のブレーカーで業務を並べる。
+   ========================================================= */
+
+:root {
+	--night: #101b2a;
+	--night-2: #172638;
+	--night-3: #22354b;
+	--paper: #f7f4ec;
+	--paper-2: #efeadd;
+	--ink: #1b2430;
+	--ink-soft: #4a5562;
+	--amber: #f5b642;
+	--amber-soft: #ffe3a3;
+	--amber-deep: #c9861a;
+	--blue: #1e4fa3;
+	--green: #2e9e48;
+	--panel: #e5e7e2;
+	--panel-line: #c3c8c1;
+	--white: #fff;
+	--band-h: 44px;
+	--hd-h: 76px;
+	--ff-serif: "Noto Serif JP", "Hiragino Mincho ProN", serif;
+	--ff-sans: "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif;
+	--ff-en: "Josefin Sans", "Noto Sans JP", sans-serif;
+	--ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--band-h) + var(--hd-h) + 12px); -webkit-text-size-adjust: 100%; }
+body {
+	margin: 0;
+	padding-top: var(--band-h);
+	font-family: var(--ff-sans);
+	font-size: 16.5px;
+	line-height: 1.9;
+	color: var(--ink);
+	background: var(--paper);
+	overflow-x: hidden;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+h1, h2, h3, p, dl, dd, figure { margin: 0; }
+.wrap { width: min(1180px, 100% - 40px); margin-inline: auto; }
+.ico { width: 1.1em; height: 1.1em; flex: none; }
+
+/* 提案用の帯 */
+.demo-band {
+	position: fixed; inset: 0 0 auto; z-index: 1000;
+	padding: 8px 16px;
+	background: #fff7d6; color: #3a2e05;
+	border-bottom: 2px solid var(--amber-deep);
+	font-size: 13px; line-height: 1.55; font-weight: 700; text-align: center;
+}
+
+/* ---------- ヘッダー ---------- */
+.site-header {
+	position: sticky; top: var(--band-h); z-index: 900;
+	background: rgba(255, 255, 255, .97);
+	border-bottom: 1px solid #e2ddd0;
+}
+.site-header__inner {
+	display: flex; align-items: center; gap: 24px;
+	width: min(1320px, 100% - 32px); margin-inline: auto; height: var(--hd-h);
+}
+.logo img { width: 230px; height: auto; }
+.gnav { margin-left: auto; }
+.gnav ul { display: flex; gap: 2px; }
+.gnav a {
+	position: relative; display: flex; align-items: center; gap: 4px;
+	padding: 8px 11px; font-size: 14.5px; font-weight: 700; text-decoration: none; white-space: nowrap;
+}
+.gnav a .ico { width: 13px; height: 13px; opacity: .6; }
+.gnav a::after {
+	content: ""; position: absolute; left: 50%; bottom: 0; width: 6px; height: 6px; margin-left: -3px;
+	border-radius: 50%; background: var(--amber); opacity: 0; transform: scale(.4);
+	transition: opacity .3s, transform .3s var(--ease); box-shadow: 0 0 10px 2px rgba(245, 182, 66, .7);
+}
+.gnav a:hover::after, .gnav .is-current a::after { opacity: 1; transform: scale(1); }
+.hd-tel { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; padding-left: 18px; border-left: 1px solid #e2ddd0; }
+.hd-tel__label { font-size: 11.5px; color: var(--ink-soft); font-weight: 700; }
+.hd-tel__num { font-family: var(--ff-en); font-size: 25px; font-weight: 700; color: var(--blue); text-decoration: none; letter-spacing: .02em; padding-top: 4px; }
+.menu-btn { display: none; }
+
+/* ドロワー */
+.drawer {
+	position: fixed; inset: calc(var(--band-h) + var(--hd-h)) 0 0; z-index: 899;
+	background: var(--night); color: #fff; padding: 24px 24px 120px; overflow-y: auto;
+	opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s;
+}
+.drawer.is-open { opacity: 1; visibility: visible; }
+.drawer li a {
+	display: flex; align-items: center; gap: 14px; padding: 15px 4px;
+	border-bottom: 1px solid rgba(255, 255, 255, .12); font-size: 17px; font-weight: 700; text-decoration: none;
+}
+.drawer .sw { width: 14px; height: 22px; border: 2px solid rgba(255, 255, 255, .5); border-radius: 3px; position: relative; }
+.drawer .sw::after { content: ""; position: absolute; left: 2px; right: 2px; top: 2px; height: 7px; border-radius: 1px; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.drawer__tel { margin-top: 24px; font-family: var(--ff-en); font-size: 20px; }
+.drawer__tel a { color: var(--amber-soft); font-weight: 700; text-decoration: none; }
+
+/* ---------- 共通の部品 ---------- */
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 10px 2px rgba(245, 182, 66, .65); margin-right: 10px; vertical-align: middle; }
+.sec { padding: 104px 0; }
+.night { background: var(--night); color: #e9edf2; }
+
+.btn {
+	display: inline-flex; align-items: center; gap: 12px; justify-content: space-between;
+	min-height: 54px; padding: 0 22px 0 26px; border-radius: 4px;
+	font-weight: 700; font-size: 15.5px; text-decoration: none; line-height: 1.4;
+	transition: background .25s, color .25s, box-shadow .3s, transform .25s var(--ease);
+}
+.btn .ico { transition: transform .25s var(--ease); }
+.btn:hover .ico { transform: translateX(4px); }
+.btn--glow { background: var(--amber); color: #1d1405; box-shadow: 0 0 0 rgba(245, 182, 66, 0); }
+.btn--glow:hover { box-shadow: 0 0 28px rgba(245, 182, 66, .55); }
+.btn--line { border: 1.5px solid rgba(255, 255, 255, .55); color: #fff; }
+.btn--line:hover { border-color: var(--amber); color: var(--amber-soft); }
+.btn--line-dark { border: 1.5px solid var(--ink); color: var(--ink); }
+.btn--line-dark:hover { background: var(--ink); color: #fff; }
+.btn--light { background: #fff; color: var(--night); }
+.btn--light:hover { background: var(--amber-soft); }
+.btn--small { min-height: 46px; font-size: 14.5px; }
+.textlink { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--amber-soft); font-weight: 700; font-size: 15px; text-decoration: none; border-bottom: 1px solid rgba(255, 227, 163, .4); padding-bottom: 2px; }
+
+/* 見出し：左のランプが灯り、右へ電線が伸びる */
+.hd {
+	display: flex; align-items: center; gap: 14px;
+	font-family: var(--ff-serif); font-weight: 700; font-size: clamp(26px, 3vw, 36px); line-height: 1.4; letter-spacing: .04em;
+	margin-bottom: 44px;
+}
+.hd__lamp {
+	flex: none; width: 14px; height: 14px; border-radius: 50%;
+	background: #c8c3b6; transition: background .5s .35s, box-shadow .5s .35s;
+}
+.hd.is-in .hd__lamp { background: var(--amber); box-shadow: 0 0 14px 3px rgba(245, 182, 66, .75); }
+.hd__wire { flex: 1; height: 2px; min-width: 40px; background: linear-gradient(90deg, var(--amber) 0, var(--amber) 50%, #d6d0c2 50%) 100% 0 / 200% 100% no-repeat; transition: background-position 1s var(--ease) .1s; }
+.hd.is-in .hd__wire { background-position: 0 0; }
+.hd--light .hd__lamp { background: #3b4c61; }
+.hd--light .hd__wire { background: linear-gradient(90deg, var(--amber) 0, var(--amber) 50%, #33445a 50%) 100% 0 / 200% 100% no-repeat; }
+.hd--light.is-in .hd__wire { background-position: 0 0; }
+
+/* 出現 */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.reveal.is-in { opacity: 1; transform: none; }
+.reveal-stagger > * { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal-stagger.is-in > * { opacity: 1; transform: none; }
+.reveal-stagger.is-in > *:nth-child(2) { transition-delay: .12s; }
+.reveal-stagger.is-in > *:nth-child(3) { transition-delay: .24s; }
+.reveal-stagger.is-in > *:nth-child(4) { transition-delay: .36s; }
+.no-js .reveal, .no-js .reveal-stagger > * { opacity: 1; transform: none; }
+
+/* ---------- 壁のスイッチ ---------- */
+.wswitch { width: 100%; height: auto; overflow: visible; }
+.wswitch__plate { fill: #f4f2ec; stroke: #d5d0c4; stroke-width: 1.5; }
+.wswitch__frame { fill: #e2ded3; }
+.wswitch__face { fill: #fbfaf6; stroke: #d9d4c8; stroke-width: 1; }
+.wswitch__lip { fill: #e8e4da; transition: transform .35s var(--ease); }
+.wswitch__rocker { transform-origin: 60px 90px; transition: transform .35s var(--ease); }
+.wswitch__lamp { fill: #6fbf7e; transition: fill .3s; }
+.wswitch__screw { fill: #d3cec2; }
+/* ON：下側が押し込まれ、ランプが電球色に */
+.is-on .wswitch__lip { transform: translateY(104px); }
+.is-on .wswitch__lamp { fill: var(--amber); filter: drop-shadow(0 0 4px var(--amber)); }
+
+/* ---------- トップ：FV ---------- */
+.top-fv {
+	position: relative; overflow: hidden;
+	background:
+		radial-gradient(60% 70% at 78% 40%, rgba(245, 182, 66, .0) 0, transparent 70%),
+		var(--night);
+	color: #fff;
+	padding: 84px 0 110px;
+}
+.top-fv::before {
+	content: ""; position: absolute; inset: 0; pointer-events: none;
+	background: radial-gradient(48% 60% at 74% 44%, rgba(245, 182, 66, .26) 0, rgba(245, 182, 66, 0) 70%);
+	opacity: 0; transition: opacity 1.6s ease 1.1s;
+}
+.is-ready .top-fv::before { opacity: 1; }
+.top-fv__inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 56px; align-items: center; }
+.top-fv__kicker { font-size: 14px; font-weight: 700; letter-spacing: .08em; color: #c9d2dc; margin-bottom: 26px; }
+.top-fv__catch { font-family: var(--ff-serif); font-weight: 700; font-size: clamp(34px, 3.7vw, 54px); line-height: 1.42; white-space: nowrap; letter-spacing: .04em; }
+.top-fv__catch .ln { display: block; overflow: hidden; }
+.top-fv__catch .ln > span { display: inline-block; transform: translateY(105%); transition: transform 1s var(--ease); }
+.top-fv__catch .ln:nth-child(2) > span { transition-delay: .12s; }
+.top-fv__catch .ln:nth-child(3) > span { transition-delay: .24s; }
+.is-ready .top-fv__catch .ln > span { transform: none; }
+.top-fv__catch em { font-style: normal; color: #6b7685; transition: color .9s ease 1.25s; }
+.is-ready .top-fv__catch em { color: var(--amber-soft); }
+.top-fv__line { display: block; position: relative; height: 2px; width: 100%; max-width: 420px; margin: 30px 0 24px; background: #2a3b51; overflow: hidden; }
+.top-fv__line i { position: absolute; inset: 0; background: linear-gradient(90deg, var(--amber), var(--amber-soft)); transform: scaleX(0); transform-origin: left; transition: transform 1.1s var(--ease) .9s; }
+.is-ready .top-fv__line i { transform: scaleX(1); }
+.top-fv__sub { font-family: var(--ff-serif); font-size: clamp(17px, 1.5vw, 20px); font-weight: 500; line-height: 1.8; color: #f1ece0; }
+.top-fv__lead { margin-top: 16px; font-size: 14.5px; font-weight: 400; line-height: 1.9; color: #aeb8c4; max-width: 34em; }
+.top-fv__btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+
+.top-fv__visual { position: relative; padding: 0 0 48px 48px; }
+.top-fv__photo { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 2px; box-shadow: 0 30px 80px rgba(0, 0, 0, .45); }
+.top-fv__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 38% 50%; }
+.top-fv__dark { position: absolute; inset: 0; background: #0a1220; opacity: .86; transition: opacity 1.3s ease 1s; }
+.is-ready .top-fv__dark { opacity: .06; }
+.top-fv__switch { position: absolute; left: 0; bottom: 0; width: 112px; filter: drop-shadow(0 14px 22px rgba(0, 0, 0, .4)); }
+.top-fv__switch .wswitch__lip { transition-delay: .7s; }
+.top-fv__switch .wswitch__lamp { transition-delay: .7s; }
+.is-ready .top-fv__switch .wswitch__lip { transform: translateY(104px); }
+.is-ready .top-fv__switch .wswitch__lamp { fill: var(--amber); }
+.top-fv__on { position: absolute; left: 124px; bottom: 12px; font-family: var(--ff-en); font-weight: 700; font-size: 15px; letter-spacing: .24em; color: #55657a; transition: color .4s .75s, text-shadow .4s .75s; }
+.is-ready .top-fv__on { color: var(--amber); text-shadow: 0 0 12px rgba(245, 182, 66, .8); }
+
+/* ---------- トップ：分電盤（業務案内） ---------- */
+.panel-sec { background: var(--paper); }
+.panel {
+	position: relative; background: var(--panel); border: 1px solid var(--panel-line); border-radius: 6px;
+	padding: 26px; box-shadow: inset 0 1px 0 #fff, 0 2px 0 #d3d7cf;
+}
+.panel::before, .panel::after { content: ""; position: absolute; top: 12px; width: 7px; height: 7px; border-radius: 50%; background: #bfc4bc; box-shadow: inset 0 1px 1px rgba(0, 0, 0, .2); }
+.panel::before { left: 12px; }
+.panel::after { right: 12px; }
+.panel__main {
+	display: flex; align-items: center; gap: 16px; margin: 0 6px 22px; padding: 12px 18px;
+	background: #2a3646; color: #cfd6de; border-radius: 4px; font-family: var(--ff-en); font-size: 13px; letter-spacing: .2em;
+}
+.panel__brand { font-weight: 700; color: #fff; }
+.panel__mainsw { margin-left: auto; width: 46px; height: 22px; border-radius: 3px; background: #11192400; border: 1.5px solid #6c7a8b; position: relative; }
+.panel__mainsw i { position: absolute; top: 2px; left: 2px; width: 18px; height: 15px; border-radius: 2px; background: #8c98a6; transition: left .4s var(--ease) .2s, background .4s .2s, box-shadow .4s .2s; }
+.panel.is-in .panel__mainsw i { left: 23px; background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+.panel__mainlabel { font-family: var(--ff-sans); letter-spacing: .1em; font-weight: 700; }
+.panel__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.panel__col { background: #f8f8f5; border: 1px solid var(--panel-line); border-radius: 4px; padding: 26px 24px 28px; display: flex; flex-direction: column; }
+.panel__title { font-family: var(--ff-serif); font-size: 21px; font-weight: 700; line-height: 1.45; padding-bottom: 14px; border-bottom: 2px solid var(--ink); }
+.panel__col--eco .panel__title { border-color: var(--green); }
+.panel__photo { margin: 18px 0 16px; border-radius: 2px; overflow: hidden; }
+.panel__photo img { width: 100%; }
+.panel__text { font-size: 14.5px; line-height: 1.9; color: var(--ink-soft); }
+.breakers { margin: 20px 0 22px; border-top: 1px solid var(--panel-line); }
+.breakers li { border-bottom: 1px solid var(--panel-line); }
+.breakers a { display: flex; align-items: center; gap: 14px; padding: 11px 4px; text-decoration: none; font-weight: 700; font-size: 15px; line-height: 1.5; }
+.breakers a .ico { margin-left: auto; width: 15px; height: 15px; color: #8b938d; transition: transform .25s var(--ease), color .25s; }
+.breakers a:hover .ico { transform: translateX(3px); color: var(--ink); }
+.brk { flex: none; position: relative; width: 22px; height: 30px; border-radius: 3px; background: #2c3440; box-shadow: inset 0 0 0 2px #444f5d; }
+.brk i { position: absolute; left: 5px; right: 5px; height: 10px; bottom: 4px; border-radius: 2px; background: #9aa3ad; transition: bottom .35s var(--ease), background .3s, box-shadow .3s; }
+.panel.is-in .brk i, .breakers--index .brk i, .breakers a:hover .brk i { bottom: 16px; background: var(--amber); box-shadow: 0 0 8px rgba(245, 182, 66, .8); }
+.panel.is-in .breakers li:nth-child(1) .brk i { transition-delay: .5s; }
+.panel.is-in .breakers li:nth-child(2) .brk i { transition-delay: .62s; }
+.panel.is-in .breakers li:nth-child(3) .brk i { transition-delay: .74s; }
+.panel.is-in .breakers li:nth-child(4) .brk i { transition-delay: .86s; }
+.panel.is-in .breakers li:nth-child(5) .brk i { transition-delay: .98s; }
+.panel.is-in .breakers li:nth-child(6) .brk i { transition-delay: 1.1s; }
+.panel__col .btn { margin-top: auto; align-self: flex-start; }
+
+/* ---------- トップ：是非ご検討下さい ---------- */
+.consider { position: relative; overflow: hidden; }
+.consider::before { content: ""; position: absolute; left: 50%; top: -120px; width: 900px; height: 420px; margin-left: -450px; background: radial-gradient(closest-side, rgba(245, 182, 66, .14), transparent); pointer-events: none; }
+.consider__grid { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.consider__item { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 26px; padding: 30px; background: var(--night-2); border: 1px solid #2a3c52; border-radius: 4px; }
+.consider__item figure img { width: 100%; border-radius: 2px; }
+.consider__item h3 { font-family: var(--ff-serif); font-size: 21px; color: #fff; margin-bottom: 10px; }
+.consider__item p { font-size: 15px; line-height: 1.9; color: #c5cdd7; }
+
+/* ---------- トップ：施工実績・会社案内 ---------- */
+.about__grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 72px; }
+.about .hd { margin-bottom: 30px; }
+.about__places { border-top: 1px solid #d8d2c3; margin-bottom: 30px; }
+.about__places li { display: grid; grid-template-columns: 13em minmax(0, 1fr); gap: 18px; padding: 18px 0; border-bottom: 1px solid #d8d2c3; }
+.about__place { font-weight: 700; }
+.about__count { color: var(--ink-soft); font-size: 15px; }
+.about__year { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; font-weight: 700; }
+.about__year b { font-family: var(--ff-en); font-size: 76px; line-height: 1; color: var(--blue); letter-spacing: .02em; }
+.about__dl { margin-bottom: 30px; border-top: 1px solid #d8d2c3; }
+.about__dl div { display: grid; grid-template-columns: 6em minmax(0, 1fr); gap: 14px; padding: 14px 0; border-bottom: 1px solid #d8d2c3; font-size: 15px; }
+.about__dl dt { font-weight: 700; }
+
+/* ---------- 問い合わせの帯（全ページ） ---------- */
+.cta { background: var(--night-2); color: #fff; padding: 80px 0; position: relative; overflow: hidden; }
+.cta::before { content: ""; position: absolute; left: 6%; top: 50%; width: 520px; height: 520px; margin-top: -260px; background: radial-gradient(closest-side, rgba(245, 182, 66, .2), transparent); }
+.cta__inner { position: relative; display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 56px; align-items: center; }
+.cta__switch { width: 104px; }
+.cta__switch.is-in { }
+.cta__switch.is-in .wswitch__lip { transform: translateY(104px); transition-delay: .5s; }
+.cta__switch.is-in .wswitch__lamp { fill: var(--amber); transition-delay: .5s; }
+.cta__kicker { font-weight: 700; letter-spacing: .1em; color: #c9d2dc; }
+.cta__tel { display: flex; align-items: baseline; gap: 16px; margin-top: 8px; font-family: var(--ff-en); font-weight: 700; }
+.cta__tel span, .cta__fax span { font-size: 18px; letter-spacing: .1em; color: var(--amber); }
+.cta__tel a { font-size: clamp(40px, 6vw, 68px); line-height: 1.1; text-decoration: none; color: #fff; letter-spacing: .02em; }
+.cta__fax { display: flex; gap: 16px; align-items: baseline; font-family: var(--ff-en); font-size: 24px; font-weight: 600; color: #c9d2dc; margin: 4px 0 26px; }
+
+/* ---------- フッター ---------- */
+.site-footer { background: var(--night); color: #b9c3ce; padding: 56px 0 28px; font-size: 14px; }
+.site-footer__inner { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+.site-footer__name { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.site-footer__name small { font-family: var(--ff-en); font-size: 13px; font-weight: 400; color: #8e9aa8; margin-left: 6px; }
+.site-footer__nav ul { display: flex; flex-wrap: wrap; gap: 6px 22px; max-width: 520px; }
+.site-footer__nav a { text-decoration: none; }
+.site-footer__nav a:hover { color: var(--amber-soft); }
+.site-footer__copy { text-align: center; margin-top: 40px; font-family: var(--ff-en); font-size: 12.5px; color: #7f8b99; }
+.site-footer__demo { text-align: center; font-size: 12px; color: #7f8b99; }
+.sp-bar { display: none; }
+
+/* ---------- 下層：ペンダントライトの題 ---------- */
+.page-hero { position: relative; overflow: hidden; background: var(--night); color: #fff; padding: 128px 0 64px; }
+.page-hero__lamp { position: absolute; right: 14%; top: 0; width: 120px; display: flex; flex-direction: column; align-items: center; }
+.page-hero__cord { width: 2px; height: 56px; background: #435369; }
+.page-hero__shade { width: 120px; height: 70px; }
+.page-hero__shade path { fill: #2b3a4e; stroke: #4c5d74; stroke-width: 1.5; }
+.page-hero__bulb { fill: #5a6779; transition: fill .6s ease .5s; }
+.is-ready .page-hero__bulb { fill: var(--amber-soft); }
+.page-hero__cone {
+	position: absolute; top: 120px; left: 50%; width: 560px; height: 420px; margin-left: -280px;
+	background: radial-gradient(50% 90% at 50% 0, rgba(255, 214, 130, .34), rgba(255, 214, 130, 0) 70%);
+	clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%);
+	opacity: 0; transition: opacity 1s ease .6s; pointer-events: none;
+}
+.is-ready .page-hero__cone { opacity: 1; }
+.page-hero__inner { position: relative; }
+.page-hero__kicker { font-size: 14px; font-weight: 700; letter-spacing: .1em; color: #c9d2dc; margin-bottom: 14px; }
+.page-hero__ja { font-family: var(--ff-serif); font-weight: 700; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.45; letter-spacing: .04em; max-width: 17em; color: #7d8898; transition: color .8s ease .7s, text-shadow .8s ease .7s; }
+.is-ready .page-hero__ja { color: #fff; text-shadow: 0 0 30px rgba(245, 182, 66, .25); }
+.breadcrumb { margin-top: 26px; font-size: 13px; color: #9aa6b3; }
+.breadcrumb ol { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.breadcrumb li + li::before { content: "―"; margin-right: 10px; color: #56657a; }
+.breadcrumb a { text-decoration: none; }
+.wire { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #22354b; }
+.wire i { position: absolute; inset: 0; background: linear-gradient(90deg, transparent, var(--amber) 40%, var(--amber-soft) 60%, transparent); transform: translateX(-100%); }
+.is-ready .wire i { animation: current 2.4s var(--ease) .9s 1 forwards; }
+@keyframes current { to { transform: translateX(100%); } }
+
+/* ---------- 下層：業務ページ ---------- */
+.svc__intro { font-family: var(--ff-serif); font-size: clamp(18px, 1.8vw, 22px); line-height: 2; font-weight: 500; margin-bottom: 64px; padding-left: 24px; border-left: 3px solid var(--amber); }
+.svc__layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 56px; align-items: start; }
+.svc__index { position: sticky; top: calc(var(--band-h) + var(--hd-h) + 24px); background: var(--panel); border: 1px solid var(--panel-line); border-radius: 6px; padding: 18px 18px 6px; }
+.svc__index-title { font-weight: 700; font-size: 13px; letter-spacing: .14em; color: var(--ink-soft); margin-bottom: 6px; }
+.svc__index .breakers { margin: 0; border-top: 0; }
+.svc__index .breakers li:last-child { border-bottom: 0; }
+.svc__index .breakers a { font-size: 14.5px; }
+.svc__list { display: grid; gap: 28px; }
+.svc__item { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 36px; padding: 36px; background: #fff; border: 1px solid #e3ddcf; border-radius: 4px; }
+.svc__item--wide { grid-template-columns: minmax(0, 1fr); }
+.svc__photo img { width: 100%; border-radius: 2px; }
+.svc__title { display: flex; align-items: center; gap: 12px; font-family: var(--ff-serif); font-size: 24px; line-height: 1.45; margin-bottom: 14px; }
+.svc__title .sw { flex: none; width: 14px; height: 22px; border: 2px solid #bdb6a6; border-radius: 3px; position: relative; }
+.svc__title .sw::after { content: ""; position: absolute; left: 2px; right: 2px; bottom: 2px; height: 7px; border-radius: 1px; background: #c8c3b6; transition: background .4s .3s, box-shadow .4s .3s, bottom .3s .3s; }
+.svc__item.is-in .svc__title .sw::after { bottom: 9px; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.svc__body p { font-size: 16px; line-height: 2; }
+.svc__notice { padding: 14px 18px; background: #fff7d6; border-left: 3px solid var(--amber-deep); }
+.fire { display: grid; grid-template-columns: 313px minmax(0, 1fr); gap: 36px; margin-top: 10px; }
+.fire__list > div { padding: 14px 0; border-bottom: 1px solid #e3ddcf; }
+.fire__list > div:first-child { padding-top: 0; }
+.fire__list dt { font-weight: 700; display: flex; gap: 8px; align-items: center; }
+.fire__list dt span { color: var(--amber-deep); font-size: 18px; }
+.fire__list dd { font-size: 15px; line-height: 1.9; color: var(--ink-soft); }
+.fire__list dd li { padding-left: 1em; text-indent: -1em; }
+.fire__list dd li::before { content: "・"; }
+
+/* ---------- 下層：施工実績 ---------- */
+.works__grid { display: grid; grid-template-columns: 1.2fr 1fr .8fr; gap: 24px; align-items: start; }
+.works__group { background: #fff; border: 1px solid #e3ddcf; border-radius: 4px; padding: 26px 26px 18px; }
+.works__place { display: flex; gap: 12px; align-items: flex-start; font-size: 19px; line-height: 1.5; padding-bottom: 16px; margin-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.works__place .ico { width: 22px; height: 22px; color: var(--amber-deep); margin-top: 3px; }
+.works__place small { display: block; font-size: 12px; color: var(--ink-soft); font-weight: 700; letter-spacing: .1em; }
+.works__list li { display: flex; gap: 12px; align-items: baseline; padding: 11px 0; border-bottom: 1px dashed #dcd5c5; font-size: 15.5px; line-height: 1.6; }
+.works__list li:last-child { border-bottom: 0; }
+.lamp { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px rgba(245, 182, 66, .8); transform: translateY(-2px); }
+.works__note { margin-top: 26px; font-size: 13px; color: var(--ink-soft); }
+
+/* ---------- 下層：会社案内 ---------- */
+.outline__table { background: #fff; border: 1px solid #e3ddcf; border-radius: 4px; }
+.outline__table > div { display: grid; grid-template-columns: 11em minmax(0, 1fr); border-bottom: 1px solid #ece6d9; }
+.outline__table > div:last-child { border-bottom: 0; }
+.outline__table dt { padding: 20px 28px; font-weight: 700; background: var(--paper-2); }
+.outline__table dd { padding: 20px 28px; }
+.outline__table .tel { color: var(--blue); font-weight: 700; }
+.business__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; }
+.business__list li { display: flex; gap: 14px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid #2a3c52; font-size: 16.5px; }
+.map-sec__frame { position: relative; aspect-ratio: 16 / 7; border-radius: 4px; overflow: hidden; border: 1px solid #e3ddcf; background: #e8e4da; }
+.map-sec__frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+.map-sec__addr { display: flex; gap: 8px; align-items: center; margin-top: 16px; font-weight: 700; }
+
+/* ---------- 下層：お問い合せ ---------- */
+.contact-sec__grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+.contact-sec .hd { font-size: clamp(20px, 2vw, 25px); }
+.demo-note { margin: -18px 0 24px; padding: 12px 16px; background: #fff7d6; border-left: 3px solid var(--amber-deep); font-size: 14px; font-weight: 700; }
+.demo-form { background: #fff; border: 1px solid #e3ddcf; border-radius: 4px; padding: 10px 32px 30px; }
+.demo-form__row { display: grid; grid-template-columns: 10em minmax(0, 1fr); gap: 20px; align-items: center; padding: 18px 0; border-bottom: 1px solid #ece6d9; }
+.demo-form__row label { font-weight: 700; font-size: 15px; }
+.demo-form input, .demo-form textarea { width: 100%; padding: 12px 14px; font: inherit; font-size: 16px; border: 1px solid #d3ccbc; border-radius: 3px; background: #f6f3ec; color: var(--ink); }
+.demo-form__addr { display: grid; gap: 10px; }
+.demo-form__zip { display: flex; align-items: center; gap: 8px; max-width: 220px; }
+.demo-form__confirm { text-align: center; margin-top: 24px; font-size: 15px; }
+.demo-form__submit { text-align: center; margin-top: 14px; }
+.demo-form__submit button { min-width: 240px; min-height: 56px; border: 0; border-radius: 4px; background: #b9b3a5; color: #fff; font: inherit; font-weight: 700; font-size: 16px; cursor: not-allowed; }
+.demo-form__note { text-align: center; margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
+.contact-sec__side { position: sticky; top: calc(var(--band-h) + var(--hd-h) + 24px); background: var(--night); color: #fff; border-radius: 4px; padding: 36px 32px; }
+.contact-sec__switch { width: 74px; margin-bottom: 22px; }
+.contact-sec__side.is-in .wswitch__lip { transform: translateY(104px); transition-delay: .5s; }
+.contact-sec__side.is-in .wswitch__lamp { fill: var(--amber); transition-delay: .5s; }
+.contact-sec__label { font-weight: 700; color: #c9d2dc; font-size: 14px; }
+.contact-sec__tel a { font-family: var(--ff-en); font-size: 38px; font-weight: 700; color: #fff; text-decoration: none; }
+.contact-sec__fax { font-family: var(--ff-en); font-size: 20px; color: #c9d2dc; margin-bottom: 20px; }
+.contact-sec__addr { font-size: 14px; color: #aeb8c4; padding-top: 18px; border-top: 1px solid #2a3c52; }
+
+.entry-content { max-width: 760px; }
+
+/* =========================================================
+   レスポンシブ
+   ========================================================= */
+@media (max-width: 1180px) {
+	.gnav a { padding: 8px 8px; font-size: 13.5px; }
+	.logo img { width: 190px; }
+	.hd-tel__num { font-size: 21px; }
+}
+@media (max-width: 1024px) {
+	:root { --hd-h: 64px; }
+	.gnav, .hd-tel { display: none; }
+	.logo img { width: 200px; }
+	.menu-btn {
+		display: flex; align-items: center; gap: 8px; margin-left: auto; padding: 10px 12px;
+		background: var(--night); color: #fff; border: 0; border-radius: 4px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+	}
+	.menu-btn__bars { display: grid; gap: 4px; }
+	.menu-btn__bars i { display: block; width: 18px; height: 2px; background: currentColor; transition: transform .3s, opacity .3s; }
+	.menu-btn[aria-expanded="true"] .menu-btn__bars i:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+	.menu-btn[aria-expanded="true"] .menu-btn__bars i:nth-child(2) { opacity: 0; }
+	.menu-btn[aria-expanded="true"] .menu-btn__bars i:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+	.top-fv__inner { grid-template-columns: minmax(0, 1fr); gap: 44px; }
+	.top-fv__visual { max-width: 680px; }
+	.panel__cols { grid-template-columns: minmax(0, 1fr); }
+	.consider__grid { grid-template-columns: minmax(0, 1fr); }
+	.about__grid { grid-template-columns: minmax(0, 1fr); gap: 64px; }
+	.svc__layout { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+	.svc__index { position: static; }
+	.works__grid { grid-template-columns: minmax(0, 1fr); }
+	.contact-sec__grid { grid-template-columns: minmax(0, 1fr); }
+	.contact-sec__side { position: static; }
+}
+@media (max-width: 720px) {
+	body { font-size: 16px; padding-bottom: 64px; }
+	.wrap { width: calc(100% - 32px); }
+	.demo-band { font-size: 11.5px; padding: 6px 12px; line-height: 1.5; }
+	.logo img { width: 172px; }
+	.sec { padding: 72px 0; }
+	.hd { margin-bottom: 30px; font-size: 25px; }
+	.top-fv { padding: 22px 0 64px; }
+	.top-fv__visual { order: -1; }
+	.top-fv__inner { gap: 26px; }
+	.top-fv__kicker { font-size: 12.5px; margin-bottom: 16px; }
+	.top-fv__catch { font-size: 32px; white-space: normal; }
+	.top-fv__line { margin: 20px 0 16px; }
+	.top-fv__sub { font-size: 16.5px; }
+	.top-fv__lead { font-size: 13.5px; }
+	.top-fv__btns { margin-top: 24px; gap: 10px; }
+	.top-fv__btns .btn { flex: 1 1 140px; padding: 0 14px 0 18px; font-size: 14.5px; }
+	.top-fv__visual { padding: 0 0 26px 30px; }
+	.top-fv__photo { aspect-ratio: 16 / 9; }
+	.top-fv__switch { width: 60px; }
+	.top-fv__on { left: 70px; bottom: 2px; font-size: 12px; }
+	.panel { padding: 14px; }
+	.panel__main { margin: 4px 4px 14px; }
+	.panel__col { padding: 22px 18px 22px; }
+	.consider__item { grid-template-columns: minmax(0, 1fr); padding: 22px; gap: 16px; }
+	.consider__item figure { max-width: 300px; }
+	.about__places li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+	.about__year b { font-size: 60px; }
+	.cta { padding: 60px 0; }
+	.cta__inner { grid-template-columns: 64px minmax(0, 1fr); gap: 22px; align-items: start; }
+	.cta__switch { width: 60px; }
+	.cta__tel { gap: 10px; flex-wrap: wrap; }
+	.cta__tel a { font-size: 36px; }
+	.cta__fax { font-size: 19px; }
+	.page-hero { padding: 96px 0 44px; }
+	.page-hero__lamp { right: 8%; width: 80px; }
+	.page-hero__shade { width: 80px; height: 47px; }
+	.page-hero__cord { height: 30px; }
+	.page-hero__cone { top: 76px; width: 340px; margin-left: -170px; }
+	.page-hero__ja { font-size: 26px; }
+	.svc__intro { font-size: 17px; margin-bottom: 40px; padding-left: 16px; }
+	.svc__item { grid-template-columns: minmax(0, 1fr); padding: 22px; gap: 18px; }
+	.svc__title { font-size: 21px; }
+	.fire { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+	.outline__table > div { grid-template-columns: minmax(0, 1fr); }
+	.outline__table dt { padding: 12px 18px; }
+	.outline__table dd { padding: 12px 18px 16px; }
+	.business__list { grid-template-columns: minmax(0, 1fr); }
+	.map-sec__frame { aspect-ratio: 4 / 3; }
+	.demo-form { padding: 6px 18px 24px; }
+	.demo-form__row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+	.contact-sec__tel a { font-size: 32px; }
+	.sp-bar {
+		display: grid; grid-template-columns: 1fr 1fr; position: fixed; inset: auto 0 0; z-index: 950;
+		height: 60px; background: var(--night); box-shadow: 0 -4px 16px rgba(0, 0, 0, .2);
+	}
+	.sp-bar a { display: flex; align-items: center; justify-content: center; gap: 8px; color: #fff; font-weight: 700; text-decoration: none; font-size: 15px; }
+	.sp-bar__tel { background: var(--amber); color: #1d1405 !important; }
+}
+
+/* 撮影用・動きを減らす設定 */
+html.is-shot .top-fv__dark { opacity: .06; }
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { transition-duration: .01ms !important; transition-delay: 0s !important; animation: none !important; }
+	html { scroll-behavior: auto; }
+	.wire i { transform: none; opacity: .5; }
+}
+
+.pc-br { display: none; }
+@media (min-width: 1025px) { .pc-br { display: inline; } }
